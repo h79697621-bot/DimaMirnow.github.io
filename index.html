@@ -3,387 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python в браузере — с установкой библиотек</title>
+    <title>APK Builder — твой код → приложение</title>
     <style>
-        * { box-sizing: border-box; }
         body {
-            background: #1e1e2e;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            color: #cdd6f4;
-        }
-        .container {
-            max-width: 1300px;
+            background: #0f172a;
+            font-family: system-ui;
+            color: white;
+            max-width: 800px;
             margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            color: #89b4fa;
-            margin-bottom: 20px;
-        }
-        .row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .editor-section {
-            flex: 2;
-            background: #11111b;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .console-section {
-            flex: 1;
-            background: #11111b;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-        }
-        .toolbar {
-            background: #313244;
-            padding: 10px 15px;
-            display: flex;
-            gap: 10px;
-            border-bottom: 1px solid #45475a;
+            padding: 20px;
         }
         textarea {
             width: 100%;
             min-height: 300px;
-            background: #1e1e2e;
-            color: #cdd6f4;
-            border: none;
-            padding: 15px;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 14px;
-            resize: vertical;
-            outline: none;
-            line-height: 1.5;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: #00ff9d;
+            font-family: monospace;
+            padding: 16px;
         }
         button {
-            background: #89b4fa;
-            color: #1e1e2e;
+            background: #3b82f6;
+            padding: 12px 24px;
             border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
+            border-radius: 40px;
+            color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        button:hover {
-            background: #b4befa;
-            transform: translateY(-1px);
-        }
-        button:disabled {
-            background: #45475a;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .output {
-            background: #0f0f17;
-            border-top: 1px solid #313244;
-            padding: 15px;
-            font-family: 'Fira Code', monospace;
-            font-size: 13px;
-            white-space: pre-wrap;
-            word-break: break-word;
-            min-height: 200px;
-            max-height: 300px;
-            overflow: auto;
+            margin-top: 16px;
         }
         .status {
-            padding: 8px 15px;
-            font-size: 12px;
-            background: #313244;
-            color: #a6adc8;
-            border-top: 1px solid #45475a;
-        }
-        .error {
-            color: #f38ba8;
-        }
-        .success {
-            color: #a6e3a1;
-        }
-        .console-input {
-            background: #1e1e2e;
-            padding: 10px 15px;
-            display: flex;
-            gap: 10px;
-            border-bottom: 1px solid #313244;
-        }
-        .console-input input {
-            flex: 1;
-            background: #0f0f17;
-            border: 1px solid #45475a;
-            color: #cdd6f4;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            outline: none;
-        }
-        .console-input input:focus {
-            border-color: #89b4fa;
-        }
-        .console-output {
-            flex: 1;
-            background: #0f0f17;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 12px;
-            overflow: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-            min-height: 200px;
-        }
-        .preinstalled {
-            background: #313244;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-        }
-        .preinstalled span {
-            display: inline-block;
-            background: #45475a;
-            padding: 2px 8px;
+            margin-top: 16px;
+            padding: 12px;
             border-radius: 12px;
-            margin: 2px;
-        }
-        h3 {
-            margin: 0;
-            padding: 10px 15px;
-            font-size: 14px;
-            background: #313244;
-            border-bottom: 1px solid #45475a;
+            display: none;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>🐍 Python в браузере + Менеджер пакетов</h1>
-    <div class="row">
-        <!-- Левая панель: редактор кода -->
-        <div class="editor-section">
-            <div class="toolbar">
-                <button id="runBtn" disabled>⏳ Загрузка Python...</button>
-                <button id="clearBtn">🗑 Очистить вывод</button>
-            </div>
-            <textarea id="code" placeholder="Напишите код Python...">
-# Попробуйте импортировать установленные библиотеки
-import math
-print(f"Корень из 16: {math.sqrt(16)}")
-
-# Если установили numpy, раскомментируйте:
-# import numpy as np
-# print(f"Массив: {np.array([1,2,3])}")
-
-# Список доступных пакетов Pyodide можно посмотреть справа
-            </textarea>
-            <div class="output" id="output">▶ Результат появится здесь...</div>
-            <div class="status" id="status">⏳ Инициализация Python...</div>
-        </div>
-
-        <!-- Правая панель: консоль установки пакетов -->
-        <div class="console-section">
-            <h3>📦 Консоль установки библиотек</h3>
-            <div class="console-input">
-                <input type="text" id="packageInput" placeholder="Название пакета (например: numpy, pandas, requests)" autocomplete="off">
-                <button id="installBtn" disabled>⬇️ Установить</button>
-            </div>
-            <div class="preinstalled">
-                <strong>✅ Предустановлено в Pyodide:</strong><br>
-                <span>numpy</span> <span>pandas</span> <span>matplotlib</span> <span>scipy</span>
-                <span>scikit-learn</span> <span>requests</span> <span>beautifulsoup4</span>
-                <span>Pillow</span> <span>sympy</span> <span>pyyaml</span> <span>dateutil</span>
-                <span>pytz</span>
-            </div>
-            <div class="console-output" id="consoleOutput">
-                💡 Введите название пакета и нажмите "Установить"<br>
-                <span class="success">✅ Работает: numpy, pandas, matplotlib, requests...</span><br>
-                <span class="error">❌ Не работает: библиотеки с C-расширениями вне списка Pyodide</span>
-            </div>
-            <div class="status" style="border-top: none;">
-                ⚡ Pyodide позволяет устанавливать ТОЛЬКО пакеты из своего репозитория
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
-<script>
-    let pyodide = null;
-    let isReady = false;
-    let micropip = null;
-
-    const codeArea = document.getElementById('code');
-    const outputDiv = document.getElementById('output');
-    const runBtn = document.getElementById('runBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const statusSpan = document.getElementById('status');
-    const installBtn = document.getElementById('installBtn');
-    const packageInput = document.getElementById('packageInput');
-    const consoleOutput = document.getElementById('consoleOutput');
-
-    // Функция для добавления сообщения в консоль пакетов
-    function addConsoleMessage(text, isError = false) {
-        const p = document.createElement('div');
-        p.innerHTML = isError ? `<span class="error">❌ ${text}</span>` : `<span class="success">✅ ${text}</span>`;
-        consoleOutput.appendChild(p);
-        consoleOutput.scrollTop = consoleOutput.scrollHeight;
-    }
-
-    // Загрузка Pyodide
-    async function loadPyodide() {
-        statusSpan.innerHTML = '📦 Загрузка Python (WebAssembly)... Первый раз может занять 10-15 секунд';
-        try {
-            pyodide = await globalThis.loadPyodide({
-                indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
-            });
-            
-            // Загружаем micropip
-            await pyodide.loadPackage("micropip");
-            micropip = pyodide.pyimport("micropip");
-            
-            // Настройка вывода
-            pyodide.runPython(`
-import sys
-from io import StringIO
-
-class CapturedOutput:
-    def __init__(self):
-        self.buffer = StringIO()
-    def write(self, text):
-        self.buffer.write(text)
-    def getvalue(self):
-        return self.buffer.getvalue()
-    def clear(self):
-        self.buffer = StringIO()
-
-_captured = CapturedOutput()
-sys.stdout = _captured
-sys.stderr = _captured
-            `);
-            
-            isReady = true;
-            runBtn.disabled = false;
-            installBtn.disabled = false;
-            runBtn.innerHTML = '▶ Запустить код';
-            statusSpan.innerHTML = '✅ Python готов! Можете устанавливать пакеты через консоль справа';
-            addConsoleMessage('Pyodide загружен! Можно устанавливать пакеты из списка выше.');
-        } catch (err) {
-            statusSpan.innerHTML = '❌ Ошибка загрузки Python: ' + err.message;
-            console.error(err);
-        }
-    }
-
-    // Установка пакета через micropip
-    async function installPackage() {
-        if (!isReady || !micropip) {
-            addConsoleMessage('Pyodide ещё не загружен, подождите...', true);
-            return;
-        }
-        
-        const packageName = packageInput.value.trim();
-        if (!packageName) {
-            addConsoleMessage('Введите название пакета', true);
-            return;
-        }
-        
-        addConsoleMessage(`Установка ${packageName}...`);
-        installBtn.disabled = true;
-        installBtn.innerHTML = '⏳ Установка...';
-        
-        try {
-            // micropip.install - асинхронная функция, нужен await
-            await micropip.install(packageName);
-            addConsoleMessage(`Пакет ${packageName} успешно установлен! Теперь его можно импортировать в коде.`);
-            
-            // Проверяем, можно ли импортировать
-            try {
-                pyodide.runPython(`import ${packageName.split('[')[0].split('==')[0]}`);
-                addConsoleMessage(`Импорт ${packageName.split('[')[0].split('==')[0]} работает!`);
-            } catch (e) {
-                addConsoleMessage(`Пакет установлен, но импорт не удался: ${e.message}`, true);
-            }
-        } catch (err) {
-            let errorMsg = err.message || String(err);
-            if (errorMsg.includes('Could not find')) {
-                errorMsg = `Пакет "${packageName}" не найден в репозитории Pyodide. Доступны: numpy, pandas, matplotlib, scipy, scikit-learn, requests, beautifulsoup4 и другие из списка выше.`;
-            } else if (errorMsg.includes('CORS')) {
-                errorMsg = `Ошибка CORS. Некоторые пакеты нельзя установить из-за ограничений браузера.`;
-            }
-            addConsoleMessage(errorMsg, true);
-        } finally {
-            installBtn.disabled = false;
-            installBtn.innerHTML = '⬇️ Установить';
-            packageInput.value = '';
-            packageInput.focus();
-        }
-    }
-
-    // Выполнение кода
-    async function runCode() {
-        if (!isReady || !pyodide) {
-            outputDiv.innerHTML = '<span class="error">⏳ Python ещё не загружен, подождите...</span>';
-            return;
-        }
-
-        const code = codeArea.value;
-        if (!code.trim()) {
-            outputDiv.innerHTML = '<span class="error">⚠️ Введите код Python</span>';
-            return;
-        }
-
-        outputDiv.innerHTML = '⏳ Выполнение...';
-        statusSpan.innerHTML = '⚙️ Выполняется код...';
-
-        try {
-            pyodide.runPython("_captured.clear()");
-            pyodide.runPython(code);
-            const result = pyodide.runPython("_captured.getvalue()");
-            
-            if (result && result.trim()) {
-                outputDiv.innerHTML = result.replace(/\n/g, '<br>');
-            } else {
-                outputDiv.innerHTML = '<span style="color: #a6e3a1;">✅ Код выполнен без вывода</span>';
-            }
-            statusSpan.innerHTML = '✅ Готово';
-        } catch (err) {
-            outputDiv.innerHTML = `<span class="error">❌ Ошибка:\n${err.message || err}</span>`;
-            statusSpan.innerHTML = '❌ Ошибка выполнения';
-        }
-    }
-
-    function clearOutput() {
-        outputDiv.innerHTML = '▶ Очищено';
-        statusSpan.innerHTML = '🗑 Вывод очищен';
-        setTimeout(() => {
-            if (statusSpan.innerHTML === '🗑 Вывод очищен') {
-                statusSpan.innerHTML = isReady ? '✅ Python готов' : '⏳ Загрузка...';
-            }
-        }, 1500);
-    }
-
-    // Запускаем загрузку
-    loadPyodide();
-
-    // Навешиваем события
-    runBtn.addEventListener('click', runCode);
-    clearBtn.addEventListener('click', clearOutput);
-    installBtn.addEventListener('click', installPackage);
-    packageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') installPackage();
-    });
+    <h1>📱 APK Builder</h1>
+    <p>Вставь HTML код — получи APK</p>
     
-    codeArea.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-            e.preventDefault();
-            if (isReady) runCode();
-        }
-    });
-</script>
+    <textarea id="code" placeholder='<h1>Моё приложение</h1>'></textarea>
+    <br>
+    <input type="text" id="appName" placeholder="Название приложения" style="width:100%; padding:12px; margin-top:12px; background:#1e293b; border:1px solid #334155; border-radius:12px; color:white;">
+    <br>
+    <button id="buildBtn">🚀 Собрать APK</button>
+    <div id="status" class="status"></div>
+
+    <script>
+        document.getElementById('buildBtn').onclick = async () => {
+            const code = document.getElementById('code').value;
+            const appName = document.getElementById('appName').value || 'MyApp';
+            const statusDiv = document.getElementById('status');
+            
+            if (!code.trim()) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = '#7f1a1a';
+                statusDiv.innerText = '❌ Вставь HTML код!';
+                return;
+            }
+            
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = '#1e3a5f';
+            statusDiv.innerText = '⏳ Отправка на сервер...';
+            
+            // Здесь нужен API сервер для сборки APK
+            // Без него этот код не заработает — нужно развернуть бэкенд
+            
+            statusDiv.style.background = '#7f1a1a';
+            statusDiv.innerText = '❌ Нужен API сервер. Смотри инструкцию ниже.';
+        };
+    </script>
 </body>
 </html>
